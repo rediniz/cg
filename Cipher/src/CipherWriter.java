@@ -1,5 +1,6 @@
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /*
@@ -14,8 +15,13 @@ import java.io.Writer;
  */
 public class CipherWriter extends Writer{
 
+    OutputStreamWriter out;
+    
+    public CipherWriter (OutputStreamWriter out){
+        this.out = out;
+    }
     @Override
-    public void write(char[] cbuf, int off, int len) throws IOException {
+    public void write(char[] cbuf,  int off, int len) throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
