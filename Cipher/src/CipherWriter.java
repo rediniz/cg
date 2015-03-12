@@ -35,4 +35,10 @@ public class CipherWriter extends Writer{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public char[] cifra(char[] cadeia){
+        
+        
+        return cadeia;
+    }
+    
 }
