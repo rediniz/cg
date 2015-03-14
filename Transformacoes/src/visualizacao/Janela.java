@@ -1,5 +1,6 @@
 package visualizacao;
 
+import java.awt.Graphics2D;
 import java.awt.event.ItemEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,12 +8,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import objetos.Poligono;
 import objetos.Ponto;
 import objetos.Reta;
+import transformacoes.Transformacoes;
 
 /**
  *
@@ -22,14 +26,19 @@ public class Janela extends javax.swing.JFrame {
 
     File arquivo;
     int homogenea = 1;
-    ArrayList objetos;
+    //ArrayList objetos;
+    HashMap<String, Object> objetos;
+    Transformacoes t;
+    boolean pivoRotacao = false;
+    boolean pivoEscala = false;
 
     /**
      * Creates new form Janela
      */
     public Janela() {
-        initComponents();
 
+        initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -41,7 +50,7 @@ public class Janela extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panel_janela = new javax.swing.JPanel();
+        panel_janela = new JDesenho();
         label_objeto = new javax.swing.JLabel();
         combo_objeto = new javax.swing.JComboBox();
         label_dx = new javax.swing.JLabel();
@@ -51,7 +60,6 @@ public class Janela extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         textField_angulo = new javax.swing.JTextField();
         button_transladar = new javax.swing.JButton();
-        button_escolherPivoRotacao = new javax.swing.JButton();
         textField_pivoRotacao = new javax.swing.JTextField();
         label_pivoRotacao = new javax.swing.JLabel();
         label_sx = new javax.swing.JLabel();
@@ -60,25 +68,33 @@ public class Janela extends javax.swing.JFrame {
         textField_sy = new javax.swing.JTextField();
         button_escalar = new javax.swing.JButton();
         button_rotacionar = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jLabel3 = new javax.swing.JLabel();
+        scrollPane_matrizResultante = new javax.swing.JScrollPane();
+        textArea_matrizResultante = new javax.swing.JTextArea();
+        label_matrizResultante = new javax.swing.JLabel();
         radio_translacao = new javax.swing.JRadioButton();
         radio_rotacao = new javax.swing.JRadioButton();
         radio_escala = new javax.swing.JRadioButton();
         label_pivoEscala = new javax.swing.JLabel();
         textField_pivoEscala = new javax.swing.JTextField();
-        button_escolherPivoEscala = new javax.swing.JButton();
         label_arquivo = new javax.swing.JLabel();
         button_escolherArquivo = new javax.swing.JButton();
         textField_arquivo = new javax.swing.JTextField();
         button_desenharObjetos = new javax.swing.JButton();
+        toogleButton_escolherPivoRotacao = new javax.swing.JToggleButton();
+        toogleButton_escolherPivoEscala = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Trabalho CG 2");
         setBackground(new java.awt.Color(153, 153, 153));
 
         panel_janela.setBackground(new java.awt.Color(204, 204, 204));
+        panel_janela.setMaximumSize(new java.awt.Dimension(500, 500));
+        panel_janela.setMinimumSize(new java.awt.Dimension(500, 500));
+        panel_janela.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                panel_janelaMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel_janelaLayout = new javax.swing.GroupLayout(panel_janela);
         panel_janela.setLayout(panel_janelaLayout);
@@ -94,7 +110,7 @@ public class Janela extends javax.swing.JFrame {
         label_objeto.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         label_objeto.setText("Objeto:");
 
-        combo_objeto.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "P1", "P2" }));
+        combo_objeto.setEnabled(false);
 
         label_dx.setText("Dx:");
 
@@ -110,13 +126,15 @@ public class Janela extends javax.swing.JFrame {
 
         button_transladar.setText("Transladar");
         button_transladar.setEnabled(false);
-
-        button_escolherPivoRotacao.setText("Escolher");
-        button_escolherPivoRotacao.setEnabled(false);
+        button_transladar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_transladarActionPerformed(evt);
+            }
+        });
 
         textField_pivoRotacao.setEnabled(false);
 
-        label_pivoRotacao.setText("Pivô:");
+        label_pivoRotacao.setText("Pivô (x,y):");
 
         label_sx.setText("Sx:");
 
@@ -131,16 +149,23 @@ public class Janela extends javax.swing.JFrame {
 
         button_rotacionar.setText("Rotacionar");
         button_rotacionar.setEnabled(false);
+        button_rotacionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_rotacionarActionPerformed(evt);
+            }
+        });
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(18);
-        jTextArea1.setRows(3);
-        jScrollPane1.setViewportView(jTextArea1);
+        textArea_matrizResultante.setEditable(false);
+        textArea_matrizResultante.setColumns(18);
+        textArea_matrizResultante.setRows(3);
+        textArea_matrizResultante.setFocusable(false);
+        scrollPane_matrizResultante.setViewportView(textArea_matrizResultante);
 
-        jLabel3.setText("Matriz Resultante:");
+        label_matrizResultante.setText("Matriz Resultante:");
 
         radio_translacao.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         radio_translacao.setText("Translação");
+        radio_translacao.setEnabled(false);
         radio_translacao.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 radio_translacaoItemStateChanged(evt);
@@ -149,6 +174,7 @@ public class Janela extends javax.swing.JFrame {
 
         radio_rotacao.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         radio_rotacao.setText("Rotação");
+        radio_rotacao.setEnabled(false);
         radio_rotacao.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 radio_rotacaoItemStateChanged(evt);
@@ -157,18 +183,16 @@ public class Janela extends javax.swing.JFrame {
 
         radio_escala.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         radio_escala.setText("Escala");
+        radio_escala.setEnabled(false);
         radio_escala.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 radio_escalaItemStateChanged(evt);
             }
         });
 
-        label_pivoEscala.setText("Pivô:");
+        label_pivoEscala.setText("Pivô (x,y):");
 
         textField_pivoEscala.setEnabled(false);
-
-        button_escolherPivoEscala.setText("Escolher");
-        button_escolherPivoEscala.setEnabled(false);
 
         label_arquivo.setText("Arquivo:");
 
@@ -179,8 +203,27 @@ public class Janela extends javax.swing.JFrame {
             }
         });
 
+        textField_arquivo.setMaximumSize(new java.awt.Dimension(239, 23));
+        textField_arquivo.setMinimumSize(new java.awt.Dimension(6, 26));
+
         button_desenharObjetos.setText("Desenhar Objetos");
         button_desenharObjetos.setEnabled(false);
+        button_desenharObjetos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_desenharObjetosActionPerformed(evt);
+            }
+        });
+
+        toogleButton_escolherPivoRotacao.setText("Escolher");
+        toogleButton_escolherPivoRotacao.setEnabled(false);
+        toogleButton_escolherPivoRotacao.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                toogleButton_escolherPivoRotacaoItemStateChanged(evt);
+            }
+        });
+
+        toogleButton_escolherPivoEscala.setText("Escolher");
+        toogleButton_escolherPivoEscala.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -189,49 +232,35 @@ public class Janela extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(label_arquivo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textField_arquivo)
+                                .addComponent(textField_arquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(button_escolherArquivo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(button_desenharObjetos))
                             .addComponent(panel_janela, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(label_objeto)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(textField_pivoEscala)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(combo_objeto, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(toogleButton_escolherPivoEscala))
                             .addComponent(radio_translacao)
                             .addComponent(radio_rotacao)
                             .addComponent(radio_escala)
                             .addComponent(label_pivoEscala)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(label_dx)
-                                    .addComponent(textField_dx, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(label_dy, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(textField_dy, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(label_pivoRotacao)
                             .addComponent(jLabel1)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(textField_pivoRotacao, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(button_escolherPivoRotacao))
+                                .addComponent(toogleButton_escolherPivoRotacao))
                             .addComponent(textField_angulo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(button_transladar, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(textField_pivoEscala, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(button_escolherPivoEscala))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(button_rotacionar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(layout.createSequentialGroup()
@@ -242,18 +271,34 @@ public class Janela extends javax.swing.JFrame {
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(label_sy)
                                         .addComponent(textField_sy, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addComponent(button_escalar, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(button_escalar, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(label_objeto)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(combo_objeto, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(label_dx)
+                                    .addComponent(textField_dx, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(label_dy, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(textField_dy, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addComponent(label_matrizResultante)
+                    .addComponent(scrollPane_matrizResultante, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(22, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(label_arquivo)
-                    .addComponent(textField_arquivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(button_escolherArquivo)
-                    .addComponent(button_desenharObjetos))
+                .addContainerGap(18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(button_escolherArquivo)
+                        .addComponent(button_desenharObjetos))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(textField_arquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(label_arquivo)))
                 .addGap(7, 7, 7)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_janela, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -285,7 +330,7 @@ public class Janela extends javax.swing.JFrame {
                         .addComponent(label_pivoRotacao)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(textField_pivoRotacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button_escolherPivoRotacao))
+                            .addComponent(toogleButton_escolherPivoRotacao))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(button_rotacionar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -305,13 +350,13 @@ public class Janela extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(textField_pivoEscala, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button_escolherPivoEscala))
+                            .addComponent(toogleButton_escolherPivoEscala))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(button_escalar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
+                .addComponent(label_matrizResultante)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollPane_matrizResultante, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -345,14 +390,14 @@ public class Janela extends javax.swing.JFrame {
 
             textField_pivoRotacao.setEnabled(true);
             textField_angulo.setEnabled(true);
-            button_escolherPivoRotacao.setEnabled(true);
+            toogleButton_escolherPivoRotacao.setEnabled(true);
             button_rotacionar.setEnabled(true);
 
         } else {
 
             textField_pivoRotacao.setEnabled(false);
             textField_angulo.setEnabled(false);
-            button_escolherPivoRotacao.setEnabled(false);
+            toogleButton_escolherPivoRotacao.setEnabled(false);
             button_rotacionar.setEnabled(false);
 
         }
@@ -367,7 +412,7 @@ public class Janela extends javax.swing.JFrame {
             textField_sx.setEnabled(true);
             textField_sy.setEnabled(true);
             textField_pivoEscala.setEnabled(true);
-            button_escolherPivoEscala.setEnabled(true);
+            toogleButton_escolherPivoEscala.setEnabled(true);
             button_escalar.setEnabled(true);
 
         } else {
@@ -375,7 +420,7 @@ public class Janela extends javax.swing.JFrame {
             textField_sx.setEnabled(false);
             textField_sy.setEnabled(false);
             textField_pivoEscala.setEnabled(false);
-            button_escolherPivoEscala.setEnabled(false);
+            toogleButton_escolherPivoEscala.setEnabled(false);
             button_escalar.setEnabled(false);
 
         }
@@ -393,10 +438,75 @@ public class Janela extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_button_escolherArquivoActionPerformed
 
+    private void button_desenharObjetosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_desenharObjetosActionPerformed
+
+        radio_translacao.setEnabled(true);
+        radio_rotacao.setEnabled(true);
+        radio_escala.setEnabled(true);
+        combo_objeto.setEnabled(true);
+    }//GEN-LAST:event_button_desenharObjetosActionPerformed
+
+    private void button_transladarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_transladarActionPerformed
+        if (textField_dx.getText().isEmpty() || textField_dy.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe os valores de Dx e Dy.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        } else {
+
+            double dx = Double.valueOf(textField_dx.getText());
+            double dy = Double.valueOf(textField_dx.getText());
+
+            Object o = objetos.get(combo_objeto.getSelectedItem().toString());
+
+            t.transladar(o, dx, dy);
+
+        }
+
+
+    }//GEN-LAST:event_button_transladarActionPerformed
+
+    private void button_rotacionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_rotacionarActionPerformed
+        if (textField_angulo.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe os valores de Dx e Dy.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        } else {
+
+        }
+    }//GEN-LAST:event_button_rotacionarActionPerformed
+
+    private void toogleButton_escolherPivoRotacaoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_toogleButton_escolherPivoRotacaoItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            pivoRotacao = true;
+        }
+    }//GEN-LAST:event_toogleButton_escolherPivoRotacaoItemStateChanged
+
+    private void panel_janelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panel_janelaMouseClicked
+        int sw = 500;
+        int sh = 500;
+        int lm = 0;
+        int tm = 0;
+
+        double xc = 0;
+        double yc = 0;
+        
+        int xs = evt.getX();
+        int ys = evt.getY();
+
+        double xscale = sw*2;
+        double yscale = sh*2;
+        
+        double x = (xs - lm - sw / 2) * (xscale / sw) + xc;
+        double y = (sh / 2 - ys + tm) * (yscale / sh) + yc;
+
+        System.out.println(xs+","+ys);
+        System.out.println(x+","+y);
+        Primitive.drawPixel((Graphics2D) panel_janela.getGraphics(), (int)x, (int)y);
+         panel_janela.repaint();
+        
+        
+    }//GEN-LAST:event_panel_janelaMouseClicked
+
     private void criarObjetos() {
 
         BufferedReader in;
-        objetos = new ArrayList();
+        objetos = new HashMap<>();
 
         try {
             in = new BufferedReader(new FileReader(arquivo));
@@ -410,7 +520,6 @@ public class Janela extends javax.swing.JFrame {
                     case 'J':
 
                         //Janela de visualização
-                        
                         break;
 
                     case 'R':
@@ -418,13 +527,13 @@ public class Janela extends javax.swing.JFrame {
                         linha = linha.replace("R ", "");
                         pontos = linha.split("(?<!\\G[^,]*),");
 
-                        Ponto p1 = new Ponto(Integer.valueOf(pontos[0].split(",")[0]),Integer.valueOf(pontos[0].split(",")[1]));
-                        Ponto p2 = new Ponto(Integer.valueOf(pontos[1].split(",")[0]),Integer.valueOf(pontos[1].split(",")[1]));
+                        Ponto p1 = new Ponto(Integer.valueOf(pontos[0].split(",")[0]), Integer.valueOf(pontos[0].split(",")[1]));
+                        Ponto p2 = new Ponto(Integer.valueOf(pontos[1].split(",")[0]), Integer.valueOf(pontos[1].split(",")[1]));
 
                         Reta r = new Reta(p1, p2, "R" + nRetas);
 
-                        objetos.add(r);
-                        
+                        objetos.put("R" + nRetas, r);
+
                         System.out.println(r);
 
                         break;
@@ -434,34 +543,38 @@ public class Janela extends javax.swing.JFrame {
                         linha = linha.replace("P ", "");
                         pontos = linha.split("(?<!\\G[^,]*),");
                         ArrayList pontosPoligono = new ArrayList();
-                        
-                        for(String s:pontos){
-                            Ponto p = new Ponto(Integer.valueOf(s.split(",")[0]),Integer.valueOf(s.split(",")[1]));
+
+                        for (String s : pontos) {
+                            Ponto p = new Ponto(Integer.valueOf(s.split(",")[0]), Integer.valueOf(s.split(",")[1]));
                             pontosPoligono.add(p);
                         }
-                        pontosPoligono.remove(pontosPoligono.size()-1);
-                        Poligono pol = new Poligono(pontosPoligono, "P"+nPoligonos);
+                        pontosPoligono.remove(pontosPoligono.size() - 1);
+                        Poligono pol = new Poligono(pontosPoligono, "P" + nPoligonos);
+
+                        objetos.put("P" + nPoligonos, pol);
+
                         System.out.println(pol);
+
                         break;
                 }
-
-                for (Object o : objetos) {
-                    if(o instanceof Reta){
-                        combo_objeto.addItem(((Reta)o).getId());
-                    }
+            }
+            for (String chave : objetos.keySet()) {
+                Object o = objetos.get(chave);
+                if (o instanceof Reta) {
+                    combo_objeto.addItem(((Reta) o).getId());
+                } else if (o instanceof Poligono) {
+                    combo_objeto.addItem(((Poligono) o).getId());
                 }
             }
-
             button_desenharObjetos.setEnabled(true);
-            
-            
+
+            t = new Transformacoes();
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Janela.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Janela.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     /**
@@ -493,10 +606,8 @@ public class Janela extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Janela().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Janela().setVisible(true);
         });
     }
 
@@ -504,18 +615,14 @@ public class Janela extends javax.swing.JFrame {
     private javax.swing.JButton button_desenharObjetos;
     private javax.swing.JButton button_escalar;
     private javax.swing.JButton button_escolherArquivo;
-    private javax.swing.JButton button_escolherPivoEscala;
-    private javax.swing.JButton button_escolherPivoRotacao;
     private javax.swing.JButton button_rotacionar;
     private javax.swing.JButton button_transladar;
     private javax.swing.JComboBox combo_objeto;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel label_arquivo;
     private javax.swing.JLabel label_dx;
     private javax.swing.JLabel label_dy;
+    private javax.swing.JLabel label_matrizResultante;
     private javax.swing.JLabel label_objeto;
     private javax.swing.JLabel label_pivoEscala;
     private javax.swing.JLabel label_pivoRotacao;
@@ -525,6 +632,8 @@ public class Janela extends javax.swing.JFrame {
     private javax.swing.JRadioButton radio_escala;
     private javax.swing.JRadioButton radio_rotacao;
     private javax.swing.JRadioButton radio_translacao;
+    private javax.swing.JScrollPane scrollPane_matrizResultante;
+    private javax.swing.JTextArea textArea_matrizResultante;
     private javax.swing.JTextField textField_angulo;
     private javax.swing.JTextField textField_arquivo;
     private javax.swing.JTextField textField_dx;
@@ -533,5 +642,7 @@ public class Janela extends javax.swing.JFrame {
     private javax.swing.JTextField textField_pivoRotacao;
     private javax.swing.JTextField textField_sx;
     private javax.swing.JTextField textField_sy;
+    private javax.swing.JToggleButton toogleButton_escolherPivoEscala;
+    private javax.swing.JToggleButton toogleButton_escolherPivoRotacao;
     // End of variables declaration//GEN-END:variables
 }
