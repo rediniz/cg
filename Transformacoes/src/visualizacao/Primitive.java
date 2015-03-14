@@ -5,7 +5,6 @@
  */
 package visualizacao;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 /**
@@ -18,8 +17,8 @@ public class Primitive {
     static int sh = 500;
     static double xc = 0;
     static double yc = 0;
-    static double xscale = 500;
-    static double yscale = 500;
+    static double xscale = 1000;
+    static double yscale = 1000;
     static int lm = 0;
     static int tm = 0;
 

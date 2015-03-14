@@ -452,11 +452,14 @@ public class Janela extends javax.swing.JFrame {
         } else {
 
             double dx = Double.valueOf(textField_dx.getText());
-            double dy = Double.valueOf(textField_dx.getText());
+            double dy = Double.valueOf(textField_dy.getText());
 
             Object o = objetos.get(combo_objeto.getSelectedItem().toString());
-
-            t.transladar(o, dx, dy);
+                     
+            Object oLinha  = t.transladar(o, dx, dy);
+            
+            Primitive.tracaLinhaBresenham((Graphics2D)panel_janela.getGraphics(), ((Reta)oLinha).getP1().getX(),((Reta)oLinha).getP1().getY(), ((Reta)oLinha).getP2().getX(), ((Reta)oLinha).getP2().getY());
+            
 
         }
 
@@ -498,7 +501,7 @@ public class Janela extends javax.swing.JFrame {
         System.out.println(xs+","+ys);
         System.out.println(x+","+y);
         Primitive.drawPixel((Graphics2D) panel_janela.getGraphics(), (int)x, (int)y);
-         panel_janela.repaint();
+        panel_janela.repaint();
         
         
     }//GEN-LAST:event_panel_janelaMouseClicked
