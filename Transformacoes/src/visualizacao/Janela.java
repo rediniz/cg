@@ -1,4 +1,4 @@
-package transformacoes;
+package visualizacao;
 
 import java.awt.event.ItemEvent;
 import java.io.BufferedReader;
@@ -6,9 +6,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import objetos.Poligono;
+import objetos.Ponto;
+import objetos.Reta;
 
 /**
  *
@@ -17,12 +21,15 @@ import javax.swing.JFileChooser;
 public class Janela extends javax.swing.JFrame {
 
     File arquivo;
+    int homogenea = 1;
+    ArrayList objetos;
 
     /**
      * Creates new form Janela
      */
     public Janela() {
         initComponents();
+
     }
 
     /**
@@ -65,6 +72,7 @@ public class Janela extends javax.swing.JFrame {
         label_arquivo = new javax.swing.JLabel();
         button_escolherArquivo = new javax.swing.JButton();
         textField_arquivo = new javax.swing.JTextField();
+        button_desenharObjetos = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Trabalho CG 2");
@@ -118,7 +126,7 @@ public class Janela extends javax.swing.JFrame {
 
         textField_sy.setEnabled(false);
 
-        button_escalar.setText("Escalar");
+        button_escalar.setText("Escalonar");
         button_escalar.setEnabled(false);
 
         button_rotacionar.setText("Rotacionar");
@@ -171,6 +179,9 @@ public class Janela extends javax.swing.JFrame {
             }
         });
 
+        button_desenharObjetos.setText("Desenhar Objetos");
+        button_desenharObjetos.setEnabled(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -187,15 +198,16 @@ public class Janela extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(textField_arquivo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(button_escolherArquivo))
+                                .addComponent(button_escolherArquivo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(button_desenharObjetos))
                             .addComponent(panel_janela, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(label_objeto)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(combo_objeto, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(combo_objeto, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(radio_translacao)
                             .addComponent(radio_rotacao)
                             .addComponent(radio_escala)
@@ -236,13 +248,13 @@ public class Janela extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(label_arquivo)
-                        .addComponent(textField_arquivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(button_escolherArquivo))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap(22, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(label_arquivo)
+                    .addComponent(textField_arquivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(button_escolherArquivo)
+                    .addComponent(button_desenharObjetos))
+                .addGap(7, 7, 7)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_janela, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -377,24 +389,80 @@ public class Janela extends javax.swing.JFrame {
 
             arquivo = escolher.getSelectedFile();
             textField_arquivo.setText(arquivo.getPath());
-
-            BufferedReader in;
-            try {
-                in = new BufferedReader(new FileReader(arquivo));
-                String linha;
-
-                while ((linha = in.readLine()) != null) {
-                    
-                }
-                
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Janela.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(Janela.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+            criarObjetos();
         }
     }//GEN-LAST:event_button_escolherArquivoActionPerformed
+
+    private void criarObjetos() {
+
+        BufferedReader in;
+        objetos = new ArrayList();
+
+        try {
+            in = new BufferedReader(new FileReader(arquivo));
+            String linha;
+            int nRetas = 0;
+            int nPoligonos = 0;
+            String[] pontos;
+            while ((linha = in.readLine()) != null) {
+
+                switch (linha.charAt(0)) {
+                    case 'J':
+
+                        //Janela de visualização
+                        
+                        break;
+
+                    case 'R':
+                        nRetas++;
+                        linha = linha.replace("R ", "");
+                        pontos = linha.split("(?<!\\G[^,]*),");
+
+                        Ponto p1 = new Ponto(Integer.valueOf(pontos[0].split(",")[0]),Integer.valueOf(pontos[0].split(",")[1]));
+                        Ponto p2 = new Ponto(Integer.valueOf(pontos[1].split(",")[0]),Integer.valueOf(pontos[1].split(",")[1]));
+
+                        Reta r = new Reta(p1, p2, "R" + nRetas);
+
+                        objetos.add(r);
+                        
+                        System.out.println(r);
+
+                        break;
+
+                    case 'P':
+                        nPoligonos++;
+                        linha = linha.replace("P ", "");
+                        pontos = linha.split("(?<!\\G[^,]*),");
+                        ArrayList pontosPoligono = new ArrayList();
+                        
+                        for(String s:pontos){
+                            Ponto p = new Ponto(Integer.valueOf(s.split(",")[0]),Integer.valueOf(s.split(",")[1]));
+                            pontosPoligono.add(p);
+                        }
+                        pontosPoligono.remove(pontosPoligono.size()-1);
+                        Poligono pol = new Poligono(pontosPoligono, "P"+nPoligonos);
+                        System.out.println(pol);
+                        break;
+                }
+
+                for (Object o : objetos) {
+                    if(o instanceof Reta){
+                        combo_objeto.addItem(((Reta)o).getId());
+                    }
+                }
+            }
+
+            button_desenharObjetos.setEnabled(true);
+            
+            
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Janela.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Janela.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 
     /**
      * @param args the command line arguments
@@ -433,6 +501,7 @@ public class Janela extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton button_desenharObjetos;
     private javax.swing.JButton button_escalar;
     private javax.swing.JButton button_escolherArquivo;
     private javax.swing.JButton button_escolherPivoEscala;
