@@ -14,10 +14,10 @@ import java.util.ArrayList;
  */
 public class Poligono {
     
-    private ArrayList pontos;
+    private ArrayList<Ponto> pontos;
     private String id;
     
-    public Poligono(ArrayList pontos, String id){
+    public Poligono(ArrayList<Ponto> pontos, String id){
         this.pontos = pontos;
         this.id = id;
     }
@@ -25,7 +25,7 @@ public class Poligono {
     /**
      * @return the pontos
      */
-    public ArrayList getPontos() {
+    public ArrayList<Ponto> getPontos() {
         return pontos;
     }
 

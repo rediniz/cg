@@ -7,6 +7,7 @@
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="99" green="99" red="99" type="rgb"/>
     </Property>
+    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -45,38 +46,14 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="textField_pivoEscala" max="32767" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="toogleButton_escolherPivoEscala" min="-2" max="-2" attributes="0"/>
-                          </Group>
                           <Component id="radio_translacao" min="-2" max="-2" attributes="0"/>
                           <Component id="radio_rotacao" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="radio_escala" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="label_pivoEscala" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="label_pivoRotacao" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="textField_pivoRotacao" min="-2" pref="73" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="toogleButton_escolherPivoRotacao" min="-2" max="-2" attributes="0"/>
-                          </Group>
                           <Component id="textField_angulo" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
                           <Component id="button_transladar" alignment="0" min="-2" pref="106" max="-2" attributes="0"/>
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="button_rotacionar" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="label_sx" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="textField_sx" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="label_sy" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="textField_sy" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
+                          <Component id="button_rotacionar" alignment="0" max="32767" attributes="0"/>
                           <Component id="button_escalar" min="-2" pref="106" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="label_objeto" min="-2" max="-2" attributes="0"/>
@@ -92,6 +69,28 @@
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                   <Component id="label_dy" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="textField_dy" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="label_pivoRotacao" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="toogleButton_escolherPivoRotacao" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="textField_pivoRotacao" min="-2" pref="73" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="toogleButton_escolherPivoEscala" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="textField_pivoEscala" min="-2" pref="73" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="label_sx" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="textField_sx" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="label_sy" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="textField_sy" alignment="0" min="-2" pref="50" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -150,15 +149,16 @@
                       <Component id="textField_angulo" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="label_pivoRotacao" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="textField_pivoRotacao" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="toogleButton_escolherPivoRotacao" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="textField_pivoRotacao" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="button_rotacionar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="radio_escala" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="label_sx" min="-2" max="-2" attributes="0"/>
@@ -171,7 +171,7 @@
                               <Component id="textField_sy" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="label_pivoEscala" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -281,6 +281,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="textField_pivoRotacao">
       <Properties>
+        <Property name="editable" type="boolean" value="false"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
@@ -314,6 +315,9 @@
         <Property name="text" type="java.lang.String" value="Escalonar"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_escalarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="button_rotacionar">
       <Properties>
@@ -438,6 +442,9 @@
         <Property name="text" type="java.lang.String" value="Escolher"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="toogleButton_escolherPivoEscalaItemStateChanged"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

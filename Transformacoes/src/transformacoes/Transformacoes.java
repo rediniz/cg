@@ -6,8 +6,8 @@
 package transformacoes;
 
 import java.awt.Graphics2D;
-import java.util.Arrays;
-import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import objetos.Poligono;
 import objetos.Ponto;
 import objetos.Reta;
 
@@ -51,7 +51,7 @@ public class Transformacoes {
         return c;
     }
 
-    public Object transladar(Object o, double dx, double dy) {
+    public Reta transladarReta(Reta r, double dx, double dy) {
 
         double[][] translacao = new double[3][3];
         translacao[0][0] = 1;
@@ -63,48 +63,250 @@ public class Transformacoes {
         translacao[2][0] = 0;
         translacao[2][1] = 0;
         translacao[2][2] = 1;
-        
+
         String result = "";
-        for(int i = 0; i < translacao[0].length; i++){
-            for(int j = 0; j< translacao[i].length;j++){
-                result += String.format("%11.2f",translacao[i][j]);
+        for (int i = 0; i < translacao[0].length; i++) {
+            for (int j = 0; j < translacao[i].length; j++) {
+                result += String.format("%11.2f", translacao[i][j]);
             }
-              result += "\n";
+            result += "\n";
         }
         System.out.println(result);
-        
-        if (o instanceof Reta) {
-            int x1 = ((Reta) o).getP1().getX();
-            int y1 = ((Reta) o).getP1().getY();
-            int x2 = ((Reta) o).getP2().getX();
-            int y2 = ((Reta) o).getP2().getY();
 
-            double[][] p1 = new double[3][1];
-            double[][] p2 = new double[3][1];
+        int x1 = ((Reta) r).getP1().getX();
+        int y1 = ((Reta) r).getP1().getY();
+        int x2 = ((Reta) r).getP2().getX();
+        int y2 = ((Reta) r).getP2().getY();
 
-            p1[0][0] = x1;
-            p1[1][0] = y1;
-            p1[2][0] = w;
+        double[][] p1 = new double[3][1];
+        double[][] p2 = new double[3][1];
 
-            p2[0][0] = x2;
-            p2[1][0] = y2;
-            p2[2][0] = w;
+        p1[0][0] = x1;
+        p1[1][0] = y1;
+        p1[2][0] = w;
 
-            double[][] p1Linha = multiplicarMatrizes(translacao, p1);
-            double[][] p2Linha = multiplicarMatrizes(translacao, p2);
-            
-            
-            ((Reta)o).setP1(new Ponto((int)(p1Linha[0][0]),(int)p1Linha[1][0]));
-            ((Reta)o).setP2(new Ponto((int)(p2Linha[0][0]),(int)p2Linha[1][0]));
-            
-              System.out.println((Reta)o);
+        p2[0][0] = x2;
+        p2[1][0] = y2;
+        p2[2][0] = w;
 
-        }
-      
-        return o;
+        double[][] p1Linha = multiplicarMatrizes(translacao, p1);
+        double[][] p2Linha = multiplicarMatrizes(translacao, p2);
 
-        //JOptionPane.showMessageDialog(null, "Desculpe, este método ainda não foi implementado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        ((Reta) r).setP1(new Ponto((int) (p1Linha[0][0]), (int) p1Linha[1][0]));
+        ((Reta) r).setP2(new Ponto((int) (p2Linha[0][0]), (int) p2Linha[1][0]));
+
+        System.out.println((Reta) r);
+
+        return r;
     }
+
+    public Poligono transladarPoligono(Poligono p, double dx, double dy) {
+
+        double[][] translacao = new double[3][3];
+        translacao[0][0] = 1;
+        translacao[0][1] = 0;
+        translacao[0][2] = dx;
+        translacao[1][0] = 0;
+        translacao[1][1] = 1;
+        translacao[1][2] = dy;
+        translacao[2][0] = 0;
+        translacao[2][1] = 0;
+        translacao[2][2] = 1;
+
+        String result = "";
+        for (int i = 0; i < translacao[0].length; i++) {
+            for (int j = 0; j < translacao[i].length; j++) {
+                result += String.format("%11.2f", translacao[i][j]);
+            }
+            result += "\n";
+        }
+        System.out.println(result);
+
+        ArrayList novosPontos = new ArrayList();
+        for (Ponto ponto : p.getPontos()) {
+            double[][] pt = new double[3][1];
+
+            pt[0][0] = ponto.getX();
+            pt[1][0] = ponto.getY();
+            pt[2][0] = w;
+
+            double[][] pLinha = multiplicarMatrizes(translacao, pt);
+
+            novosPontos.add(new Ponto((int) pLinha[0][0], (int) pLinha[1][0]));
+        }
+
+        p.setPontos(novosPontos);
+
+        return p;
+    }
+
+    public Poligono rotacionarPoligono(Poligono p, double angulo, double[] pivo) {
+
+        double[][] rotacao = new double[3][3];
+        rotacao[0][0] = Math.cos(angulo);
+        rotacao[0][1] = -Math.sin(angulo);
+        rotacao[0][2] = 0;
+        rotacao[1][0] = Math.sin(angulo);
+        rotacao[1][1] = Math.cos(angulo);
+        rotacao[1][2] = 0;
+        rotacao[2][0] = 0;
+        rotacao[2][1] = 0;
+        rotacao[2][2] = 1;
+
+        String result = "";
+        for (int i = 0; i < rotacao[0].length; i++) {
+            for (int j = 0; j < rotacao[i].length; j++) {
+                result += String.format("%11.2f", rotacao[i][j]);
+            }
+            result += "\n";
+        }
+        System.out.println(result);
+
+        ArrayList novosPontos = new ArrayList();
+        for (Ponto ponto : p.getPontos()) {
+       
+            //Translação 1============================================
+            double[][] translacao = new double[3][3];
+            translacao[0][0] = 1;
+            translacao[0][1] = 0;
+            translacao[0][2] = -pivo[0];
+            translacao[1][0] = 0;
+            translacao[1][1] = 1;
+            translacao[1][2] = -pivo[1];
+            translacao[2][0] = 0;
+            translacao[2][1] = 0;
+            translacao[2][2] = 1;
+            
+            double[][] pt = new double[3][1];
+            pt[0][0] = ponto.getX();
+            pt[1][0] = ponto.getY();
+            pt[2][0] = w;
+
+            double[][] pLinha = multiplicarMatrizes(translacao, pt);
+            
+            //========================================================
+            //Rotação        
+            pt = new double[3][1];
+            pt[0][0] = pLinha[0][0];
+            pt[1][0] = pLinha[1][0];
+            pt[2][0] = w;
+
+            pLinha = multiplicarMatrizes(rotacao, pt);
+            
+            //=========================================================
+            //Translação 2
+            
+            translacao = new double[3][3];
+            translacao[0][0] = 1;
+            translacao[0][1] = 0;
+            translacao[0][2] = pivo[0];
+            translacao[1][0] = 0;
+            translacao[1][1] = 1;
+            translacao[1][2] = pivo[1];
+            translacao[2][0] = 0;
+            translacao[2][1] = 0;
+            translacao[2][2] = 1;
+            
+            pt = new double[3][1];
+            pt[0][0] = pLinha[0][0];
+            pt[1][0] = pLinha[1][0];
+            pt[2][0] = w;
+
+            pLinha = multiplicarMatrizes(translacao, pt);
+                     
+            novosPontos.add(new Ponto((int) pLinha[0][0], (int) pLinha[1][0]));
+        }
+
+        p.setPontos(novosPontos);
+
+        return p;
+    }
+    
+      public Poligono escalonarPoligono(Poligono p, double sx, double sy, double[] pivo) {
+
+        double[][] escala = new double[3][3];
+        escala[0][0] = sx;
+        escala[0][1] = 0;
+        escala[0][2] = 0;
+        escala[1][0] = 0;
+        escala[1][1] = sy;
+        escala[1][2] = 0;
+        escala[2][0] = 0;
+        escala[2][1] = 0;
+        escala[2][2] = 1;
+
+        String result = "";
+        for (int i = 0; i < escala[0].length; i++) {
+            for (int j = 0; j < escala[i].length; j++) {
+                result += String.format("%11.2f", escala[i][j]);
+            }
+            result += "\n";
+        }
+        System.out.println(result);
+
+        ArrayList novosPontos = new ArrayList();
+        for (Ponto ponto : p.getPontos()) {
+       
+            //Translação 1============================================
+            double[][] translacao = new double[3][3];
+            
+            translacao[0][0] = 1;
+            translacao[0][1] = 0;
+            translacao[0][2] = -pivo[0];
+            translacao[1][0] = 0;
+            translacao[1][1] = 1;
+            translacao[1][2] = -pivo[1];
+            translacao[2][0] = 0;
+            translacao[2][1] = 0;
+            translacao[2][2] = 1;
+            
+            double[][] pt = new double[3][1];
+            pt[0][0] = ponto.getX();
+            pt[1][0] = ponto.getY();
+            pt[2][0] = w;
+
+            double[][] pLinha = multiplicarMatrizes(translacao, pt);
+            
+            //========================================================
+            //Rotação
+            
+            pt = new double[3][1];
+            pt[0][0] = pLinha[0][0];
+            pt[1][0] = pLinha[1][0];
+            pt[2][0] = w;
+
+            pLinha = multiplicarMatrizes(escala, pt);
+            
+            //=========================================================
+            //Translação 2
+            
+            translacao = new double[3][3];
+            translacao[0][0] = 1;
+            translacao[0][1] = 0;
+            translacao[0][2] = pivo[0];
+            translacao[1][0] = 0;
+            translacao[1][1] = 1;
+            translacao[1][2] = pivo[1];
+            translacao[2][0] = 0;
+            translacao[2][1] = 0;
+            translacao[2][2] = 1;
+            
+            pt = new double[3][1];
+            pt[0][0] = pLinha[0][0];
+            pt[1][0] = pLinha[1][0];
+            pt[2][0] = w;
+
+            pLinha = multiplicarMatrizes(translacao, pt);
+                     
+            novosPontos.add(new Ponto((int) pLinha[0][0], (int) pLinha[1][0]));
+        }
+
+        p.setPontos(novosPontos);
+
+        return p;
+    }
+    
+    
 
     public void tracaLinhaBresenham(Graphics2D g, int x1, int y1, int x2, int y2) {
         //Coordenadas originais
@@ -156,5 +358,9 @@ public class Transformacoes {
             //x = x + dx;
             ei = ei + 2 * dyi;
         }
+    }
+    
+    public double distancia(int x, int y){
+        return Math.sqrt(Math.pow(0-x, 2)+Math.pow(0-y, 2));
     }
 }
